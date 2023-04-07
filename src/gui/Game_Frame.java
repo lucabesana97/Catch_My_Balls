@@ -3,7 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
-public class Frame extends JFrame{
+public class Game_Frame extends JFrame{
 	public static final int TILE_SIZE = 32;
 	public static final int TILE_NUM_X = 40;
 	public static final int TILE_NUM_Y = 24;
@@ -12,10 +12,10 @@ public class Frame extends JFrame{
 	
 	private Panel panel;
 	
-	public Frame() {
+	public Game_Frame() {
 		setTitle("Catch my balls");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(WIDTH, HEIGHT);
+		setSize(WIDTH+16, HEIGHT+40);
 		setFocusable(true);
 		setResizable(false);
 		setVisible(true);

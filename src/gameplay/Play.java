@@ -1,21 +1,41 @@
 package gameplay;
 
-import java.util.Set;
-import java.util.HashSet;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-import gameobject.Direction;
+import fieldobject.Map;
+import fieldobject.TileManager;
+import gameobject.Enemy;
+import gameobject.GameObject;
+import gameobject.Objective;
+import gameobject.Obstacle;
 import gameobject.Player;
-import gameobject.State;
+import gui.Game_Frame;
 import gui.Panel;
+import hud.HudObject;
+import hud.Loss;
+import hud.Victory;
 import io.KeyHandler;
 import io.Keys;
+import objState.Direction;
+import objState.HorizontalState;
+import objState.VerticalState;
 
 public class Play {
 	final Panel panel;
 	final KeyHandler keyHandler;
 
+	private BufferedImage backBuffer;
+	HudObject[] hudBuffer;
+	List<GameObject> enemies;
 	Player player;
+	TileManager tileM;
+	List<Objective> objectives;
+	Objective remover = new Objective();
+	GameState gState, lastState;
 
 	public Play(Panel panel, KeyHandler keyHandler) {
 		this.panel = (Panel) panel;
@@ -23,7 +43,23 @@ public class Play {
 	}
 
 	public void init() {
+		backBuffer = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+		hudBuffer = new HudObject[1];
 		player = new Player();
+		tileM = new TileManager();
+		objectives = new ArrayList<>();
+		enemies = new ArrayList<>();
+		gState = GameState.RUNNING;
+		lastState = gState;
+
+		objectives.add(new Objective(10, 15));
+		objectives.add(new Objective(1, 2));
+
+		enemies.add(new Obstacle(5, 2, 6));
+		enemies.add(new Obstacle(7, 15, 6));
+		enemies.add(new Enemy(9, Game_Frame.TILE_NUM_Y - 2, Direction.LEFT));
+
 	}
 
 	public void run() {
@@ -31,54 +67,127 @@ public class Play {
 		long lastTick = System.currentTimeMillis();
 
 		while (true) {
-
 			long currentTick = System.currentTimeMillis();
-			double diffSeconds = (currentTick - lastTick) / 1000.0;
+			double diffSeconds = (currentTick - lastTick) / 60.0;
 			lastTick = currentTick;
 
-			handleUserInput();
-			update(diffSeconds);
-			// get user input
-			// do something with user input (update)
 			panel.clear();
 			drawElements();
+			
+			try {
+				handleUserInput();
+			} catch (Exception e) {
+				System.out.println(e.getCause());
+			}
+
+			if (gState == GameState.RUNNING) {
+				update(diffSeconds);
+			}
+
+
 			panel.redraw();
 			System.out.flush();
 
+			panel.getGraphics().drawImage(backBuffer, 0, 0, null);
 		}
 	}
-	private void update(double diffSeconds) {
 
-		player.move(diffSeconds);
+	private void update(double diffSeconds) {
+		// Move the player
+		player.move(diffSeconds, tileM);
+
+		// Check every objective and if the player is touching one, set the remover as
+		// it and remove it after the for loop
+		for (Objective go : objectives) {
+			if (player.distance(go) < Game_Frame.TILE_SIZE / 2) {
+				remover = go;
+			}
+		}
+		if (remover != null) {
+			objectives.remove(remover);
+		}
+
+		// If you collected all the objectives, you win
+		if (objectives.isEmpty()) {
+			victory();
+		}
+
+		// Move all the enemies and check for collision with the player
+		for (GameObject go : enemies) {
+			go.move(diffSeconds, tileM);
+			// System.out.println(player.health + "\t" + player.horizontalState);
+			if (go.collision(player) && player.horizontalState != HorizontalState.DAMAGED) {
+				player.takeDmg(go.damage);
+				// if your health is 0 or lower, game over
+				if (player.health <= 0) {
+					loss();
+				}
+			}
+			// System.out.println(player.health + "\t" + player.horizontalState);
+			// System.out.println(gState);
+		}
+	}
+
+	private void loss() {
+		gState = GameState.LOSS;
+		hudBuffer[0] = new Loss();
+	}
+
+	private void victory() {
+		gState = GameState.VICTORY;
+		hudBuffer[0] = new Victory();
 	}
 
 	private void drawElements() {
+		Graphics g = (Graphics) backBuffer.getGraphics();
+		panel.draw(tileM);
 		panel.draw(player);
+		for (GameObject go : objectives) {
+			panel.draw(go);
+		}
+		for (GameObject go : enemies) {
+			panel.draw(go);
+		}
+		if (gState != GameState.RUNNING && hudBuffer[0] != null) {
+			panel.draw(hudBuffer[0]);
+		}
+		g.dispose();
 	}
 
 	private void handleUserInput() {
+
 		final Set<Keys> pressedKeys = keyHandler.getKeys();
-		if(pressedKeys.size() == 0) {
-			player.setState(State.STILL);
-		}
-		else {
+		if (player.horizontalState != HorizontalState.DAMAGED || gState == GameState.LOSS) {
+			boolean horStill = true;
 			for (Keys keyCode : pressedKeys) {
 				switch (keyCode) {
-				case NONE:
-					player.setState(State.STILL);
+				case PAUSE:
+					if (gState == GameState.LOSS || gState == GameState.VICTORY) {
+						init();
+					}
 					break;
 				case LEFT:
-					player.setDirectionMovement(Direction.LEFT);
-					player.setState(State.MOVING);
+					player.dir = Direction.LEFT;
+					player.horizontalState = HorizontalState.MOVING;
+					horStill = false;
 					break;
 				case RIGHT:
-					player.setDirectionMovement(Direction.RIGHT);
-					player.setState(State.MOVING);
+					player.dir = Direction.RIGHT;
+					player.horizontalState = HorizontalState.MOVING;
+					horStill = false;
 					break;
 				case SPACE:
-					player.setState(State.JUMPING);
+					if (player.verticalState == VerticalState.STILL) {
+						player.verticalState = VerticalState.JUMPING;
+					}
 					break;
 				}
+				// System.out.println(player.horizontalState + "\t" + player.verticalState +
+				// "\t" + player.vertical_speed);
+			}
+			// System.out.println();
+			if (horStill) {
+				player.horizontalState = HorizontalState.STILL;
 			}
 		}
 	}
