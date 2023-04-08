@@ -8,15 +8,15 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import fieldobject.Map;
 import fieldobject.TileManager;
 import gameobject.GameObject;
 import hud.HudObject;
 
 public class Panel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	public static final int WIDTH = Game_Frame.WIDTH;
-	public static final int HEIGHT = Game_Frame.HEIGHT - 28;
+	public static final int HEIGHT = Game_Frame.HEIGHT;
 
 	public Graphics graphics;
 	final private BufferedImage imageBuffer;

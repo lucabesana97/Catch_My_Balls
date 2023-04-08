@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
 public class Game_Frame extends JFrame{
+
+	private static final long serialVersionUID = 1L;
 	public static final int TILE_SIZE = 32;
 	public static final int TILE_NUM_X = 40;
 	public static final int TILE_NUM_Y = 24;

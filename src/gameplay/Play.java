@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import fieldobject.Map;
 import fieldobject.TileManager;
 import gameobject.Enemy;
 import gameobject.GameObject;
@@ -23,11 +22,13 @@ import io.Keys;
 import objState.Direction;
 import objState.HorizontalState;
 import objState.VerticalState;
+import sounds.Sound;
 
 public class Play {
 	final Panel panel;
 	final KeyHandler keyHandler;
-
+	Sound sound = new Sound();
+	
 	private BufferedImage backBuffer;
 	HudObject[] hudBuffer;
 	List<GameObject> enemies;
@@ -44,10 +45,12 @@ public class Play {
 
 	public void init() {
 		backBuffer = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
+		
 		hudBuffer = new HudObject[1];
 		player = new Player();
+		
 		tileM = new TileManager();
+		
 		objectives = new ArrayList<>();
 		enemies = new ArrayList<>();
 		gState = GameState.RUNNING;
@@ -56,10 +59,9 @@ public class Play {
 		objectives.add(new Objective(10, 15));
 		objectives.add(new Objective(1, 2));
 
-		enemies.add(new Obstacle(5, 2, 6));
-		enemies.add(new Obstacle(7, 15, 6));
+		enemies.add(new Obstacle(11, 13, 6));
+		enemies.add(new Obstacle(29, 1, 6));
 		enemies.add(new Enemy(9, Game_Frame.TILE_NUM_Y - 2, Direction.LEFT));
-
 	}
 
 	public void run() {
@@ -72,7 +74,6 @@ public class Play {
 			lastTick = currentTick;
 
 			panel.clear();
-			drawElements();
 			
 			try {
 				handleUserInput();
@@ -80,6 +81,8 @@ public class Play {
 				System.out.println(e.getCause());
 			}
 
+			drawElements();
+			
 			if (gState == GameState.RUNNING) {
 				update(diffSeconds);
 			}
@@ -115,7 +118,7 @@ public class Play {
 		// Move all the enemies and check for collision with the player
 		for (GameObject go : enemies) {
 			go.move(diffSeconds, tileM);
-			// System.out.println(player.health + "\t" + player.horizontalState);
+			
 			if (go.collision(player) && player.horizontalState != HorizontalState.DAMAGED) {
 				player.takeDmg(go.damage);
 				// if your health is 0 or lower, game over
@@ -131,17 +134,19 @@ public class Play {
 	private void loss() {
 		gState = GameState.LOSS;
 		hudBuffer[0] = new Loss();
+		playSoundEffect(1);
 	}
 
 	private void victory() {
 		gState = GameState.VICTORY;
 		hudBuffer[0] = new Victory();
+		playSoundEffect(0);
 	}
 
 	private void drawElements() {
 		Graphics g = (Graphics) backBuffer.getGraphics();
-		panel.draw(tileM);
 		panel.draw(player);
+		panel.draw(tileM);
 		for (GameObject go : objectives) {
 			panel.draw(go);
 		}
@@ -181,6 +186,8 @@ public class Play {
 						player.verticalState = VerticalState.JUMPING;
 					}
 					break;
+				default:
+					break;
 				}
 				// System.out.println(player.horizontalState + "\t" + player.verticalState +
 				// "\t" + player.vertical_speed);
@@ -190,5 +197,20 @@ public class Play {
 				player.horizontalState = HorizontalState.STILL;
 			}
 		}
+	}
+	
+	public void playMusic(int i) {
+		sound.setFile(i);
+		sound.play();
+		sound.loop();
+	}
+	
+	public void stopMusic() {
+		sound.stop();
+	}
+	
+	public void playSoundEffect(int i) {
+		sound.setFile(i);
+		sound.play();
 	}
 }

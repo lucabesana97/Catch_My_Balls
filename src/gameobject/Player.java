@@ -3,7 +3,6 @@ package gameobject;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import fieldobject.Map;
 import fieldobject.TileManager;
 import gui.Game_Frame;
 import objState.Direction;
@@ -14,7 +13,7 @@ public class Player extends GameObject {
 	private final static int JUMP_POWER = -80;
 	private final static double DMG_MAX_TIMER = 3;
 	private final static double NORMAL_SPEED = 50;
-	private final static double SPRINT_SPEED = 70;
+	//private final static double SPRINT_SPEED = 70;
 	private final static double DAMAGE_SPEED = 20;
 
 	private double dmgCounter = 0;
@@ -28,6 +27,7 @@ public class Player extends GameObject {
 		horizontalState = HorizontalState.STILL;
 		verticalState = VerticalState.FALLING;
 		health = 100;
+		margin = 1;
 	}
 
 	public void draw(Graphics graphics) {
