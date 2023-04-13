@@ -2,7 +2,9 @@ package hud;
 
 import java.awt.*;
 
-public class HudObject {
+public abstract class HudObject {
+	public int tileX, tileY;
+	
     public void draw(Graphics graphics) {
 
     }

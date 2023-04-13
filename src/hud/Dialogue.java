@@ -7,10 +7,12 @@ import java.awt.*;
 public class Dialogue extends HudObject {
         public String str_1;
         public String str_2;
+        public String str_3;
 
         public Dialogue(){
-                str_1 = "Thank you Luca!";
-                str_2 = "You brought me back my flower!";
+                str_1 = "";
+                str_2 = "";
+                str_3 = "";
         }
 
         public void draw(Graphics g) {
@@ -23,6 +25,7 @@ public class Dialogue extends HudObject {
 
                 g.setFont(new Font("Monospaced", Font.BOLD, 20));
                 g.drawString(str_1, 15, Game_Frame.HEIGHT - Game_Frame.HEIGHT/4 + 10 + g.getFont().getSize());
-                g.drawString(str_2, 15, Game_Frame.HEIGHT - Game_Frame.HEIGHT/4 + 10 + 2 * g.getFont().getSize() + 10);
+                g.drawString(str_2, 15, Game_Frame.HEIGHT - Game_Frame.HEIGHT/4 + 20 + 2 * g.getFont().getSize());
+                g.drawString(str_3, 15, Game_Frame.HEIGHT - Game_Frame.HEIGHT/4 + 30 + 3 * g.getFont().getSize());
         }
 }

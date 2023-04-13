@@ -17,6 +17,7 @@ public class TileManager {
 	public Map[][] body;
 	public Map[][] base;
 	public Map[][] detail;
+	
 	//private AffineTransform transform;
 
 	public TileManager() {
@@ -26,7 +27,9 @@ public class TileManager {
 		body = new Map[Game_Frame.TILE_NUM_X][Game_Frame.TILE_NUM_Y];
 		base = new Map[Game_Frame.TILE_NUM_X][Game_Frame.TILE_NUM_Y];
 		detail = new Map[Game_Frame.TILE_NUM_X][Game_Frame.TILE_NUM_Y];
-		
+		loadMap("/maps/plains_1_base.csv", base);
+		loadMap("/maps/plains_1_body.csv", body);
+		loadMap("/maps/plains_1_detail.csv", detail);
 		//transform = new AffineTransform();
 	}
 
@@ -63,42 +66,42 @@ public class TileManager {
 					if(num != -1) {
 						map[col][row].iD = (num << 3) >> 3;
 						map[col][row].rotation = num >> 29;
-						body[col][row].collision = tile[map[col][row].iD].collision;
-						if(body[col][row].rotation != 0) {
-							body[col][row].rotateCollision(body[col][row].rotation);
+						map[col][row].collision = tile[map[col][row].iD].collision;
+						if(map[col][row].rotation != 0) {
+							map[col][row].rotateCollision(map[col][row].rotation);
 						}
 					}
 					else {
 						map[col][row].iD = -1;
-						body[col][row].collision = 0;
+						map[col][row].collision = 0;
 						map[col][row].rotation = 0;
 					}
 				}
 			}
 			br.close();
 		}catch(Exception e){
-			System.out.println("You dumb fuck, don't make body maps with -1 in them:" + "\t" + col + "\t" + row + "\t" + s);
+			//System.out.println("You dumb fuck, don't make body maps with -1 in them:" + "\t" + col + "\t" + row + "\t" + s);
 		}
 	}
 
 	public void draw(Graphics g) {
+		/*
 		for(int k = 0; k < 2; ++k) {
 			switch(k) {
 				case 0:
-					loadMap("/maps/plains_1_base.csv", base);
 					drawMap(g, base);
 					break;
 				case 1:
-					loadMap("/maps/plains_1_body.csv", body);
 					drawMap(g, body);
 					break;
 				case 2:
-					Map tmp[][] = new Map[Game_Frame.TILE_NUM_X][Game_Frame.TILE_NUM_Y];
-					loadMap("/maps/plains_1_detail.csv", tmp);
-					drawMap(g, tmp);
+					drawMap(g, detail);
 					break;
 			}
 		}
+		*/
+
+		drawMap(g, body);
 	}
 
 

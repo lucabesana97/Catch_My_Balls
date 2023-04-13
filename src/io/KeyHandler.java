@@ -37,7 +37,7 @@ public class KeyHandler implements KeyListener {
 		switch (n) {
 		case KeyEvent.VK_W:
 		case KeyEvent.VK_UP:
-			returner = Keys.UP;
+			returner = Keys.JUMP;
 			break;
 		case KeyEvent.VK_S:
 		case KeyEvent.VK_DOWN:
@@ -52,11 +52,13 @@ public class KeyHandler implements KeyListener {
 			returner = Keys.RIGHT;
 			break;
 		case KeyEvent.VK_SPACE:
-			returner = Keys.SPACE;
+			returner = Keys.JUMP;
 			break;
 		case KeyEvent.VK_ENTER:
-		case KeyEvent.VK_P:
 			returner = Keys.PAUSE;
+			break;
+		case KeyEvent.VK_P:
+			returner = Keys.SHOOT;
 			break;
 		default:
 			break;

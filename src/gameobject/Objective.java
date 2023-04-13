@@ -19,9 +19,9 @@ public class Objective extends GameObject {
 	}
 
 	public void draw(Graphics graphics) {
-		graphics.setColor(Color.MAGENTA);
+		graphics.setColor(Color.ORANGE);
 		graphics.fillOval((int) x, (int) y, size, size);
-		graphics.setColor(Color.pink);
+		graphics.setColor(Color.YELLOW);
 		graphics.fillOval((int) x, (int) y, size - 4, size - 4);
 	}
 
