@@ -15,10 +15,10 @@ public class Crawler_Clock extends Enemy{
 
 	public void move(double diffSeconds, TileManager tileM) {
 		setTile();
-		bottom_tile = (int) (y + 1 + size + speed * diffSeconds)/Game_Frame.TILE_SIZE;
-		right_tile = (int) (x + size + 10 + speed * diffSeconds)/Game_Frame.TILE_SIZE;
-		left_tile = (int) (x - 1 - speed * diffSeconds)/Game_Frame.TILE_SIZE;
-		top_tile = (int) (y - 1 - speed * diffSeconds)/Game_Frame.TILE_SIZE;
+		bottom_tile = (int) (y + 1 + size)/Game_Frame.TILE_SIZE;
+		right_tile = (int) (x + size + 10)/Game_Frame.TILE_SIZE;
+		left_tile = (int) (x - 1)/Game_Frame.TILE_SIZE;
+		top_tile = (int) (y - 1)/Game_Frame.TILE_SIZE;
 		
 		switch(dir) {
 		case DOWN:

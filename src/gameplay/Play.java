@@ -11,6 +11,7 @@ import java.util.Set;
 import fieldobject.TileManager;
 import gameobject.Bullet;
 import gameobject.Crawler_Clock;
+import gameobject.Crawler_Counter;
 import gameobject.Enemy;
 import gameobject.GameObject;
 import gameobject.Medikit;
@@ -87,9 +88,10 @@ public class Play {
 		medikit.add(new Medikit(pos_x, pos_y));
 		
 		enemies.add(new Obstacle(11, 13, 6));
-		enemies.add(new Obstacle(29, 1, 6));
+		enemies.add(new Obstacle(29, 2, 6));
 		enemies.add(new Enemy(9, Game_Frame.TILE_NUM_Y - 2, Direction.LEFT));
 		enemies.add(new Crawler_Clock(4, 4, Direction.RIGHT));
+		enemies.add(new Crawler_Counter(4, 4, Direction.LEFT));
 		
 		soundtrack.stopMusic();
 		soundtrack.playMusic(2);
@@ -142,7 +144,7 @@ public class Play {
 					pos_x = (int)(Math.random() * Game_Frame.TILE_NUM_X);
 					pos_y = (int)(Math.random() * Game_Frame.TILE_NUM_Y);
 				}while(tileM.body[pos_x][pos_y].iD != -1);
-				//iterator_3.add(new Objective(pos_x, pos_y));
+				iterator_3.add(new Objective(pos_x, pos_y));
 				effects.playSoundEffect(3);
 			}
 		}
